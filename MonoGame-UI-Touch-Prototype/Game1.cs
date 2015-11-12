@@ -15,16 +15,18 @@ namespace MonoGame_UI_Touch_Prototype
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-		TouchCollection touchC;
+		TouchHandler touchHandler;
 
 		Texture2D carTexture;
 		Sprite car;
-		float speed = 5;
-		bool brake = false;
+		const float MAX_SPEED = 10;
+		float speed = 15;
 
         Texture2D circleTexture;
         Sprite circle;
         Vector2 circleStart;
+
+		const float STEERING_RANGE = 200;
 		
 
         public Game1()
@@ -48,6 +50,8 @@ namespace MonoGame_UI_Touch_Prototype
 			graphics.IsFullScreen = true;
 			graphics.ApplyChanges();
 
+			touchHandler = new TouchHandler();
+
 			base.Initialize();
         }
 
@@ -64,7 +68,7 @@ namespace MonoGame_UI_Touch_Prototype
 			car = new Sprite(carTexture, new Vector2(200, 200), 0);
 
             circleTexture = Content.Load<Texture2D>("circle");
-            circleStart = new Vector2(GraphicsDevice.DisplayMode.Width/2 - circleTexture.Width/2, GraphicsDevice.DisplayMode.Height/2 - circleTexture.Height/2);
+            circleStart = new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f - circleTexture.Width/2, GraphicsDevice.DisplayMode.Height * 0.8f - circleTexture.Height/2);
             circle = new Sprite(circleTexture, circleStart, 0);
             // TODO: use this.Content to load your game content here
         }
@@ -88,18 +92,18 @@ namespace MonoGame_UI_Touch_Prototype
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-			touchC = TouchPanel.GetState();
+			touchHandler.Update();
 
             bool set = false;
 			bool brake = false;
 
 			// Get touch
-			foreach (TouchLocation tl in touchC) {
+			foreach (TouchLocation tl in touchHandler.GetTouches()) {
 				if (set && !brake) {		// touch 2
 					brake = true;
 				}
 				if (!set) {					// touch 1
-                    circle.SetPosition(new Vector2(tl.Position.X - circleTexture.Width / 2, tl.Position.Y - circleTexture.Height / 2));
+                    circle.SetPosition(new Vector2(tl.Position.X - circleTexture.Width / 2, circle.GetPosition().Y));
                     set = true;
                 }
 			}
@@ -111,8 +115,13 @@ namespace MonoGame_UI_Touch_Prototype
             }
 
 			// Set rotation according to how far the touch is from the centre, if car is moving
-			if (speed > 0.5) {
+			if (speed > 1) {
 				float turn = (circleStart.X - circle.GetPosition().X) / 200 * -1;
+
+				if (brake) {
+					turn *= 0.1f * speed;
+					;
+				}
 
 				car.SetRotation(car.GetRotationDegrees() + turn);
 			}
@@ -125,10 +134,10 @@ namespace MonoGame_UI_Touch_Prototype
 					speed = 0;
 				}
 			} else {
-				if (speed < 5) {
+				if (speed < MAX_SPEED) {
 					speed += 0.1f;
-				}else if(speed > 5){
-					speed = 5;
+				}else if(speed > MAX_SPEED){
+					speed = MAX_SPEED;
 				}
 			}
 
