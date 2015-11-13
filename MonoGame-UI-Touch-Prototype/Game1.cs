@@ -77,8 +77,9 @@ namespace MonoGame_UI_Touch_Prototype
 
 			// Init circle sprite
             circleTexture = Content.Load<Texture2D>("circle");
-            circleStart = new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f - circleTexture.Width/2, GraphicsDevice.DisplayMode.Height * 0.8f - circleTexture.Height/2);
-            circle = new Sprite(circleTexture, circleStart, 0);
+            circleStart = new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f, GraphicsDevice.DisplayMode.Height * 0.8f);
+			//circleStart = new Vector2(1200, 800);
+			circle = new Sprite(circleTexture, circleStart, 0);
 
         }
 
@@ -124,7 +125,7 @@ namespace MonoGame_UI_Touch_Prototype
 					// If there is a touch
 					if(!set) {
 						// Find steering distance
-						distance = circleStart.X - tl.Position.X;
+						distance = circleStart.X - tl.Position.X + circle.GetTexture().Width/2;
 
 						// Clamp steering
 						if(distance > STEERING_RANGE) {
@@ -134,7 +135,7 @@ namespace MonoGame_UI_Touch_Prototype
 						}
 
 						// Set circle position
-						Vector2 pos = new Vector2(circleStart.X - distance - circle.GetTexture().Width/2, circleStart.Y);
+						Vector2 pos = new Vector2(circleStart.X - distance, circleStart.Y);
 
 						circle.SetPosition(pos);
 						set = true;
