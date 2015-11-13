@@ -1,4 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿// MonoGame UI Touch Prototype
+// Written by D. Sinclair, 2015
+// ==============================
+// Game1.cs
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
@@ -27,10 +32,11 @@ namespace MonoGame_UI_Touch_Prototype
         Vector2 circleStart;
 
 		const float STEERING_RANGE = 200;
-		
+		TouchZone controlZone;
 
-        public Game1()
-        {
+		bool fullscreen = true;
+
+        public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
@@ -41,16 +47,18 @@ namespace MonoGame_UI_Touch_Prototype
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
-        protected override void Initialize()
-        {
-            // TODO: Add your initialization logic here
-
+        protected override void Initialize() {
+			// Init window (size, fullscreen)
 			graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
 			graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-			graphics.IsFullScreen = true;
+			graphics.IsFullScreen = fullscreen;
 			graphics.ApplyChanges();
 
 			touchHandler = new TouchHandler();
+
+			// Init control zone
+			controlZone = new TouchZone(new Vector2(GraphicsDevice.DisplayMode.Width / 2, GraphicsDevice.DisplayMode.Height / 2),
+										new Vector2(GraphicsDevice.DisplayMode.Width, GraphicsDevice.DisplayMode.Height));
 
 			base.Initialize();
         }
@@ -59,26 +67,26 @@ namespace MonoGame_UI_Touch_Prototype
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
-        protected override void LoadContent()
-        {
+        protected override void LoadContent() {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+			// Init car sprite
 			carTexture = Content.Load<Texture2D>("car");
 			car = new Sprite(carTexture, new Vector2(200, 200), 0);
 
+			// Init circle sprite
             circleTexture = Content.Load<Texture2D>("circle");
             circleStart = new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f - circleTexture.Width/2, GraphicsDevice.DisplayMode.Height * 0.8f - circleTexture.Height/2);
             circle = new Sprite(circleTexture, circleStart, 0);
-            // TODO: use this.Content to load your game content here
+
         }
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
         /// </summary>
-        protected override void UnloadContent()
-        {
+        protected override void UnloadContent() {
             // TODO: Unload any non ContentManager content here
         }
 
@@ -87,25 +95,54 @@ namespace MonoGame_UI_Touch_Prototype
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
+        protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+			if(Keyboard.GetState().IsKeyDown(Keys.F11)) {
+				graphics.IsFullScreen = !fullscreen;
+				graphics.ApplyChanges();
+				fullscreen = !fullscreen;
+			}
+
+			// Update touch handler
 			touchHandler.Update();
 
             bool set = false;
 			bool brake = false;
+			float dist = 0;
 
 			// Get touch
 			foreach (TouchLocation tl in touchHandler.GetTouches()) {
-				if (set && !brake) {		// touch 2
-					brake = true;
+				// Check touch is within control zone
+				if (controlZone.isInsideZone(tl.Position)) {
+					// If there is a second touch, brake car
+					if (set && !brake) {
+						brake = true;
+					}
+
+					// If there is a touch
+					if(!set) {
+						// Find steering distance
+						float distance = circleStart.X - tl.Position.X;
+
+						// Clamp steering
+						if(distance > STEERING_RANGE) {
+							distance = STEERING_RANGE;
+						} else if(distance < -STEERING_RANGE) {
+							distance = -STEERING_RANGE;
+						}
+
+						// Set circle position
+						Vector2 pos = new Vector2(circleStart.X - distance - circle.GetTexture().Width/2, circleStart.Y);
+
+						circle.SetPosition(pos);
+						set = true;
+
+
+
+					}
 				}
-				if (!set) {					// touch 1
-                    circle.SetPosition(new Vector2(tl.Position.X - circleTexture.Width / 2, circle.GetPosition().Y));
-                    set = true;
-                }
 			}
 
 
@@ -116,11 +153,10 @@ namespace MonoGame_UI_Touch_Prototype
 
 			// Set rotation according to how far the touch is from the centre, if car is moving
 			if (speed > 1) {
-				float turn = (circleStart.X - circle.GetPosition().X) / 200 * -1;
+				float turn = dist / 50 * -1;
 
 				if (brake) {
 					turn *= 0.1f * speed;
-					;
 				}
 
 				car.SetRotation(car.GetRotationDegrees() + turn);
@@ -165,7 +201,10 @@ namespace MonoGame_UI_Touch_Prototype
             // TODO: Add your drawing code here
 			spriteBatch.Begin();
 			spriteBatch.Draw(car.GetTexture(), car.GetPosition(), rotation: car.GetRotationRadians(), origin: new Vector2(car.GetTexture().Width / 2, car.GetTexture().Height / 2));
-            spriteBatch.Draw(circle.GetTexture(), circle.GetPosition());
+			spriteBatch.Draw(circle.GetTexture(), circle.GetPosition());
+			spriteBatch.Draw(circle.GetTexture(), new Vector2(circleStart.X - 200, circle.GetPosition().Y));		// placeholders to bug-fix
+			spriteBatch.Draw(circle.GetTexture(), new Vector2(circleStart.X + 200, circle.GetPosition().Y));		// placeholders to bug-fix
+			//spriteBatch.DrawString
             spriteBatch.End();
 
             base.Draw(gameTime);

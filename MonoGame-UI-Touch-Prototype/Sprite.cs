@@ -1,4 +1,9 @@
-﻿using System;
+﻿// MonoGame UI Touch Prototype
+// Written by D. Sinclair, 2015
+// ==============================
+// Sprite.cs
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,40 +19,47 @@ namespace MonoGame_UI_Touch_Prototype {
 
 		// Getters
 		public Texture2D GetTexture() {
-			return texture;
+			// Returns the texture of the sprite
+			return m_texture;
 		}
 
 		public Vector2 GetPosition() {
-			return position;
+			// Returns the position of the sprite
+			return m_position;
 		}
 
 		public float GetRotationDegrees(){
-			return rotation;
+			// Returns the rotation of the sprite, in degrees
+			return m_rotation;
 		}
 
 		public float GetRotationRadians() {
-			float rad = rotation * (3.1415f / 180);
+			// Returns the rotation of the sprite, in radians
+			float rad = m_rotation * (3.1415f / 180);
 
 			return rad;
 		}
 
 		// Setters
 		public void SetTexture(Texture2D texture) {
-			this.texture = texture;
+			// Sets the texture of the sprite
+			m_texture = texture;
 		}
 
 		public void SetPosition(Vector2 position) {
-			this.position = position;
+			// Sets the position of the sprite
+			m_position = position;
 		}
 
 		public void SetRotation(float rotation) {
-			this.rotation = rotation;
+			// Sets the rotation of the sprite, in degrees
+			m_rotation = rotation;
 		}
 
 	// Member variables
-		private Texture2D texture;
-		private Vector2 position;
-		private float rotation;
+		private Texture2D m_texture;
+		private Vector2 m_position;
+		private float m_rotation;		// Stored in degrees
 
 	}
 }
