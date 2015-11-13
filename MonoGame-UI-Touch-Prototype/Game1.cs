@@ -81,13 +81,22 @@ namespace MonoGame_UI_Touch_Prototype
 			circleTexture = Content.Load<Texture2D>("circle");
 			//car = new Sprite(carTexture, new Vector2(200, 200), 0);
 			car.Add(new Player(carTexture,
-							   new Vector2(200, 200),
-							   45,
+							   new Vector2(1800, 200),
+							   135,
 							   new TouchZone(new Vector2(GraphicsDevice.DisplayMode.Width / 2, GraphicsDevice.DisplayMode.Height / 2),
 											 new Vector2(GraphicsDevice.DisplayMode.Width, GraphicsDevice.DisplayMode.Height)),
 							   0,
 							   circleTexture,
 							   new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f, GraphicsDevice.DisplayMode.Height * 0.8f)));
+
+			car.Add(new Player(carTexture,
+							   new Vector2(200, 200),
+							   45,
+							   new TouchZone(new Vector2(0, GraphicsDevice.DisplayMode.Height / 2),
+											 new Vector2(GraphicsDevice.DisplayMode.Width/2, GraphicsDevice.DisplayMode.Height)),
+							   0,
+							   circleTexture,
+							   new Vector2(GraphicsDevice.DisplayMode.Width * 0.2f, GraphicsDevice.DisplayMode.Height * 0.8f)));
 
 			// Init circle sprite
             
@@ -126,9 +135,11 @@ namespace MonoGame_UI_Touch_Prototype
 			// Get touch
 			foreach (TouchLocation tl in touchHandler.GetTouches()) {
 				GetCarInput(0, tl);
+				GetCarInput(1, tl);
 			}
 
 			car[0].Update();
+			car[1].Update();
 
 			base.Update(gameTime);
         }
@@ -137,20 +148,15 @@ namespace MonoGame_UI_Touch_Prototype
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
+        protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+			// Render sprites
 			spriteBatch.Begin();
 			foreach(Player pl in car) {
 				spriteBatch.Draw(pl.m_car.GetTexture(), pl.m_car.GetPosition(), rotation: pl.m_car.GetRotationRadians(), origin: new Vector2(pl.m_car.GetTexture().Width / 2, pl.m_car.GetTexture().Height / 2));
 				spriteBatch.Draw(pl.m_circle.GetTexture(), pl.m_circle.GetPosition());
 			}
-			//spriteBatch.Draw(car[0].m_car.GetTexture(), car[0].m_car.GetPosition(), rotation: car[0].m_car.GetRotationRadians(), origin: new Vector2(car[0].m_car.GetTexture().Width / 2, car[0].m_car.GetTexture().Height / 2));
-			//spriteBatch.Draw(circle.GetTexture(), circle.GetPosition());
-			//spriteBatch.Draw(circle.GetTexture(), new Vector2(circleStart.X - 200, circle.GetPosition().Y));		// placeholders to bug-fix
-			//spriteBatch.Draw(circle.GetTexture(), new Vector2(circleStart.X + 200, circle.GetPosition().Y));		// placeholders to bug-fix
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -160,8 +166,8 @@ namespace MonoGame_UI_Touch_Prototype
 			// Check touch is within control zone
 			if(car[index].m_controlZone.isInsideZone(tl.Position)) {
 				// If there is a second touch, brake car
-				if(car[index].m_set && !car[0].GetBraking()) {
-					car[0].SetBraking(true);
+				if(car[index].m_set && !car[index].GetBraking()) {
+					car[index].SetBraking(true);
 				}
 
 				// If there is a touch
@@ -177,7 +183,7 @@ namespace MonoGame_UI_Touch_Prototype
 					}
 
 					// Set circle position
-					Vector2 pos = new Vector2(car[index].m_circleStart.X - car[0].m_steeringValue, car[index].m_circleStart.Y);
+					Vector2 pos = new Vector2(car[index].m_circleStart.X - car[index].m_steeringValue, car[index].m_circleStart.Y);
 
 					car[index].m_circle.SetPosition(pos);
 					car[index].m_set = true;
