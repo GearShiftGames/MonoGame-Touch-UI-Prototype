@@ -110,7 +110,7 @@ namespace MonoGame_UI_Touch_Prototype
 
             bool set = false;
 			bool brake = false;
-			float dist = 0;
+			float distance = 0;
 
 			// Get touch
 			foreach (TouchLocation tl in touchHandler.GetTouches()) {
@@ -124,7 +124,7 @@ namespace MonoGame_UI_Touch_Prototype
 					// If there is a touch
 					if(!set) {
 						// Find steering distance
-						float distance = circleStart.X - tl.Position.X;
+						distance = circleStart.X - tl.Position.X;
 
 						// Clamp steering
 						if(distance > STEERING_RANGE) {
@@ -139,8 +139,6 @@ namespace MonoGame_UI_Touch_Prototype
 						circle.SetPosition(pos);
 						set = true;
 
-
-
 					}
 				}
 			}
@@ -153,7 +151,7 @@ namespace MonoGame_UI_Touch_Prototype
 
 			// Set rotation according to how far the touch is from the centre, if car is moving
 			if (speed > 1) {
-				float turn = dist / 50 * -1;
+				float turn = distance / 50 * -1;
 
 				if (brake) {
 					turn *= 0.1f * speed;
