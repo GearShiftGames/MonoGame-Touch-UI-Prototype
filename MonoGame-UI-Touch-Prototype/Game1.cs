@@ -80,23 +80,46 @@ namespace MonoGame_UI_Touch_Prototype
 			carTexture = Content.Load<Texture2D>("car");
 			circleTexture = Content.Load<Texture2D>("circle");
 			//car = new Sprite(carTexture, new Vector2(200, 200), 0);
+
+			// Bottom right
 			car.Add(new Player(carTexture,
-							   new Vector2(1800, 200),
-							   135,
+							   new Vector2(1800, 800),
+							   225,
 							   new TouchZone(new Vector2(GraphicsDevice.DisplayMode.Width / 2, GraphicsDevice.DisplayMode.Height / 2),
 											 new Vector2(GraphicsDevice.DisplayMode.Width, GraphicsDevice.DisplayMode.Height)),
 							   0,
 							   circleTexture,
 							   new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f, GraphicsDevice.DisplayMode.Height * 0.8f)));
 
+			// Bottom left
 			car.Add(new Player(carTexture,
-							   new Vector2(200, 200),
-							   45,
+							   new Vector2(200, 800),
+							   315,
 							   new TouchZone(new Vector2(0, GraphicsDevice.DisplayMode.Height / 2),
-											 new Vector2(GraphicsDevice.DisplayMode.Width/2, GraphicsDevice.DisplayMode.Height)),
+											 new Vector2(GraphicsDevice.DisplayMode.Width / 2, GraphicsDevice.DisplayMode.Height)),
 							   0,
 							   circleTexture,
 							   new Vector2(GraphicsDevice.DisplayMode.Width * 0.2f, GraphicsDevice.DisplayMode.Height * 0.8f)));
+
+			// Top right
+			car.Add(new Player(carTexture,
+							   new Vector2(1800, 200),
+							   135,
+							   new TouchZone(new Vector2(GraphicsDevice.DisplayMode.Width / 2, 0),
+											 new Vector2(GraphicsDevice.DisplayMode.Width, GraphicsDevice.DisplayMode.Height / 2)),
+							   0,
+							   circleTexture,
+							   new Vector2(GraphicsDevice.DisplayMode.Width * 0.8f, GraphicsDevice.DisplayMode.Height * 0.15f)));
+
+			// Top left
+			car.Add(new Player(carTexture,
+							   new Vector2(200, 200),
+							   45,
+							   new TouchZone(new Vector2(0, 0),
+											 new Vector2(GraphicsDevice.DisplayMode.Width / 2, GraphicsDevice.DisplayMode.Height / 2)),
+							   0,
+							   circleTexture,
+							   new Vector2(GraphicsDevice.DisplayMode.Width * 0.2f, GraphicsDevice.DisplayMode.Height * 0.15f)));
 
 			// Init circle sprite
             
@@ -136,10 +159,15 @@ namespace MonoGame_UI_Touch_Prototype
 			foreach (TouchLocation tl in touchHandler.GetTouches()) {
 				GetCarInput(0, tl);
 				GetCarInput(1, tl);
+				GetCarInput(2, tl);
+				GetCarInput(3, tl);
 			}
 
+			// Update objects
 			car[0].Update();
 			car[1].Update();
+			car[2].Update();
+			car[3].Update();
 
 			base.Update(gameTime);
         }
