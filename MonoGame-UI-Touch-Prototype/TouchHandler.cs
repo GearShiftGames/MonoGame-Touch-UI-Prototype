@@ -54,6 +54,11 @@ namespace MonoGame_UI_Touch_Prototype {
 			SetMin(min);
 			SetMax(max);
 		}
+
+		public TouchZone(TouchZone zone) {
+			SetMin(zone.GetMin());
+			SetMax(zone.GetMax());
+		}
 		
 		// Getters
 		public Vector2 GetMin() {
