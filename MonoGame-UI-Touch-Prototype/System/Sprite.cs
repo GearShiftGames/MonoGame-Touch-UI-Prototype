@@ -1,7 +1,9 @@
-﻿// MonoGame UI Touch Prototype
+﻿// MonoGame UI Touch Prototype -- GearShiftGames
 // Written by D. Sinclair, 2015
-// ==============================
+// ================
 // Sprite.cs
+// Classes: Sprite
+// Class for displaying textures and objects to the screen, handling position, rotation, etc.
 
 using System;
 using System.Collections.Generic;
@@ -10,12 +12,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame_UI_Touch_Prototype {
 	class Sprite {
+	// Class for displaying textures and objects to the screen, handling position, rotation, etc.
+	// ================
+
 	// Member methods
+		// Constructors
 		public Sprite(Texture2D texture, Vector2 position, float rotation) {
 			SetTexture(texture);
 			SetPosition(position);
 			SetRotation(rotation);
 		}
+
+		// Public methods
+
+		// Protected methods
+
+		// Private methods
 
 		// Getters
 		public Texture2D GetTexture() {
@@ -28,7 +40,7 @@ namespace MonoGame_UI_Touch_Prototype {
 			return m_position;
 		}
 
-		public float GetRotationDegrees(){
+		public float GetRotationDegrees() {
 			// Returns the rotation of the sprite, in degrees
 			return m_rotation;
 		}
@@ -57,9 +69,13 @@ namespace MonoGame_UI_Touch_Prototype {
 		}
 
 	// Member variables
+		// Public variables
+
+		// Protected variables
+
+		// Private variables
 		private Texture2D m_texture;
 		private Vector2 m_position;
 		private float m_rotation;		// Stored in degrees
-
 	}
 }

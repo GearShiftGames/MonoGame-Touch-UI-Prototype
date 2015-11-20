@@ -1,7 +1,9 @@
-﻿// MonoGame UI Touch Prototype
+﻿// MonoGame UI Touch Prototype -- GearShiftGames
 // Written by D. Sinclair, 2015
-// ==============================
+// ================
 // Player.cs
+// Classes: Player
+// Class for handling all functions of the player, and holding any relevant data
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame_UI_Touch_Prototype {
 	class Player {
+	// Class for handling all functions of the player, and holding any relevant data
+	// ================
+
 	// Member methods
+		// Constructors
 		public Player(Texture2D texture, Vector2 position, float rotation, TouchZone zone, float speed, Texture2D circleTexture, Vector2 circleStart) {
 			m_car = new Sprite(texture, position, rotation);
 			m_controlZone = new TouchZone(zone);
@@ -18,11 +24,12 @@ namespace MonoGame_UI_Touch_Prototype {
 
 			m_circleStart = circleStart;
 			m_circle = new Sprite(circleTexture, circleStart, 0);
-			
+
 		}
 
-		// Getters
+		// Public methods
 		public void Update() {
+			// Updates the player's attributes
 			// If no active touch
 			if(!m_set) {
 				m_circle.SetPosition(m_circleStart);
@@ -68,6 +75,11 @@ namespace MonoGame_UI_Touch_Prototype {
 			m_steeringValue = 0;
 		}
 
+		// Protected methods
+
+		// Private methods
+
+		// Getters
 		public float GetSpeed() {
 			return m_speed;
 		}
@@ -86,17 +98,20 @@ namespace MonoGame_UI_Touch_Prototype {
 		}
 
 	// Member variables
+		// Public variables
 		public Sprite m_car;
 		public TouchZone m_controlZone;
-
-		private float m_speed;
-		private bool m_braking;
 		public float m_steeringValue;
 		public bool m_set;
-		private const float MAX_SPEED = 10;
 		public float STEERING_RANGE = 200;
-
 		public Sprite m_circle;
 		public Vector2 m_circleStart;
+
+		// Protected variables
+
+		// Private variables
+		private float m_speed;
+		private bool m_braking;
+		private const float MAX_SPEED = 10;
 	}
 }
